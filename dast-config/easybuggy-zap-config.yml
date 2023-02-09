@@ -1,0 +1,66 @@
+---
+env:
+  contexts:
+  - name: "Default Context"
+    urls: ["http://172.35.0.158:9080/eb/v1/"]
+    includePaths: []
+    excludePaths: []
+    authentication:
+      parameters: {}
+      verification:
+        method: "response"
+        pollFrequency: 60
+        pollUnits: "requests"
+    sessionManagement:
+      method: "cookie"
+      parameters: {}
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+  vars: {}
+jobs:
+- parameters:
+    scanOnlyInScope: true
+    enableTags: false
+  rules: []
+  name: "passiveScan-config"
+  type: "passiveScan-config"
+- parameters: {}
+  tests:
+  - onFail: "INFO"
+    statistic: "automation.spider.urls.added"
+    #site: ""
+    operator: ">="
+    value: 1
+    type: "stats"
+    name: "At least 1 URL found"
+  name: "spider"
+  type: "spider"
+- parameters: {}
+  tests:
+  - onFail: "INFO"
+    statistic: "spiderAjax.urls.added"
+    #site: ""
+    operator: ">="
+    value: 1
+    type: "stats"
+    name: "At least 1 URL found"
+  name: "spiderAjax"
+  type: "spiderAjax"
+- parameters: {}
+  name: "passiveScan-wait"
+  type: "passiveScan-wait"
+- parameters: {}
+  policyDefinition:
+    rules: []
+  name: "activeScan"
+  type: "activeScan"
+- parameters:
+    template: "traditional-json-plus"
+    reportDir: "C:\\ZAP CLI\\Reports"
+    reportTitle: "ZAP Scanning Report"
+    reportDescription: ""
+  name: "report"
+  type: "report"
+
